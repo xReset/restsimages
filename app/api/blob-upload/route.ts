@@ -19,7 +19,8 @@ export async function POST(request: Request) {
     }
 
     if (password !== 'CreamyWeamy') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      console.error('Upload failed: Unauthorized password');
+      return NextResponse.json({ error: 'Unauthorized: Incorrect password.' }, { status: 401 });
     }
 
     let uploadFile: File | null = file;
@@ -29,7 +30,8 @@ export async function POST(request: Request) {
       // Download the file from the URL
       const res = await fetch(url);
       if (!res.ok) {
-        return NextResponse.json({ error: 'Failed to fetch file from URL' }, { status: 400 });
+        console.error('Upload failed: Could not fetch file from URL', url, res.status, res.statusText);
+        return NextResponse.json({ error: `Failed to fetch file from URL. Status: ${res.status} ${res.statusText}` }, { status: 400 });
       }
       const arrayBuffer = await res.arrayBuffer();
       const urlParts = url.split('/');
@@ -38,19 +40,25 @@ export async function POST(request: Request) {
     }
 
     if (!uploadFile) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+      console.error('Upload failed: No file provided');
+      return NextResponse.json({ error: 'No file provided.' }, { status: 400 });
     }
 
     filename = filename || uploadFile.name;
 
-    const { url: blobUrl } = await put(`media/${filename}`, uploadFile, {
-      access: 'public',
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-      allowOverwrite: true,
-    });
-
-    return NextResponse.json({ success: true, url: blobUrl });
+    try {
+      const { url: blobUrl } = await put(`media/${filename}`, uploadFile, {
+        access: 'public',
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+        allowOverwrite: true,
+      });
+      return NextResponse.json({ success: true, url: blobUrl });
+    } catch (putErr: any) {
+      console.error('Upload failed: Error saving to Vercel Blob', putErr);
+      return NextResponse.json({ error: 'Failed to save file to Vercel Blob: ' + (putErr.message || putErr.toString()) }, { status: 500 });
+    }
   } catch (err: any) {
+    console.error('Upload failed: Unknown error', err);
     return NextResponse.json({ error: err.message || 'Unknown error' }, { status: 500 });
   }
 } 

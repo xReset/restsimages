@@ -50,6 +50,7 @@ export default function UploadPage() {
         setUploadedUrl(`/media?file=${encodeURIComponent(filename)}`);
       } else {
         setMessage(data.error || 'Upload failed.');
+        console.error('Upload error:', data.error);
       }
       setLoading(false);
       return;
@@ -75,6 +76,7 @@ export default function UploadPage() {
         setUploadedUrl(`/media?file=${encodeURIComponent(filename)}`);
       } else {
         setMessage(data.error || 'Upload failed.');
+        console.error('Upload error:', data.error);
       }
       setLoading(false);
       return;
@@ -116,7 +118,7 @@ export default function UploadPage() {
         >
           {loading ? 'Uploading...' : 'Upload'}
         </button>
-        {message && <div className="text-center text-sm mt-2 text-gray-300">{message}</div>}
+        {message && <div className={`text-center text-sm mt-2 ${message.toLowerCase().includes('fail') || message.toLowerCase().includes('error') ? 'text-red-400 font-bold' : 'text-gray-300'}`}>{message}</div>}
         {uploadedUrl && (
           <div className="text-center mt-2">
             <a href={uploadedUrl} className="text-discord-blue underline">View in Media Gallery</a>
