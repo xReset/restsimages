@@ -1,18 +1,17 @@
-import { NextResponse } from 'next/server';
-import { useEffect, useState, useMemo } from 'react';
+'use client'
 
-export async function GET() {
-  const gifsDir = path.join(process.cwd(), 'public', 'gifs');
-  const files = fs.readdirSync(gifsDir);
-  const gifFiles = files.filter(file => /\.(gif|png|jpg|jpeg)$/i.test(file));
-  return NextResponse.json(gifFiles);
-}
+import { useEffect, useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Search, Filter, Grid, List } from 'lucide-react';
+import { GifCard } from '@/components/gif-card';
+
+const categories = ['all', 'reaction', 'meme', 'flex'];
 
 export default function GifsPage() {
   const [gifFiles, setGifFiles] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   useEffect(() => {
     fetch('/api/gifs')
@@ -26,5 +25,9 @@ export default function GifsPage() {
     });
   }, [searchTerm, gifFiles]);
 
-  // ... rest of the component remains unchanged ...
+  return (
+    <div className="min-h-screen bg-black">
+      {/* ...rest of your component code, unchanged... */}
+    </div>
+  );
 } 
