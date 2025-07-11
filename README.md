@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # RestsImages.pics
 
 A modern, responsive static website that serves as both a personal online hub and a GIF CDN. Built with Next.js, TypeScript, and Tailwind CSS.
@@ -177,3 +178,7 @@ If you have any questions or need help, feel free to:
 - Open an issue on GitHub
 - Contact me on Discord: RestsImages#0000
 - Email: your-email@example.com 
+=======
+# restsimages
+Website hosting images
+>>>>>>> 260a1f591760b57270f86199844e44e972af347c
