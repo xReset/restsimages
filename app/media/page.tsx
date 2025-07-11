@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 function StarBackground() {
   // Animated stars using CSS keyframes
@@ -36,6 +37,10 @@ export default function MediaPage() {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [authenticated, setAuthenticated] = useState(false);
   const [error, setError] = useState('');
+  const searchParams = useSearchParams();
+  const targetFile = searchParams.get('file');
+  const fileRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const [highlighted, setHighlighted] = useState<string | null>(null);
 
   useEffect(() => {
     if (authenticated) {
@@ -48,6 +53,16 @@ export default function MediaPage() {
         });
     }
   }, [deleting, authenticated]);
+
+  // Scroll to and highlight the file if specified in query param
+  useEffect(() => {
+    if (authenticated && targetFile && fileRefs.current[targetFile]) {
+      fileRefs.current[targetFile]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setHighlighted(targetFile);
+      const timeout = setTimeout(() => setHighlighted(null), 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [authenticated, targetFile, mediaFiles]);
 
   const handleCopy = (filename: string) => {
     const url = `https://store-lp6BxZa7PXzR45H6.vercel-storage.com/media/${filename}`;
@@ -109,7 +124,11 @@ export default function MediaPage() {
           <div className="text-white text-lg">No media found. Upload something at /upload!</div>
         ) : (
           mediaFiles.map(filename => (
-            <div key={filename} className="flex flex-col items-center">
+            <div
+              key={filename}
+              ref={el => (fileRefs.current[filename] = el)}
+              className={`flex flex-col items-center transition-shadow duration-500 ${highlighted === filename ? 'ring-4 ring-discord-blue shadow-xl' : ''}`}
+            >
               <img
                 src={`https://store-lp6BxZa7PXzR45H6.vercel-storage.com/media/${filename}`}
                 alt={filename}

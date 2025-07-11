@@ -40,6 +40,14 @@ export default function UploadPage() {
       if (data.success) {
         setUploadedUrl(data.url);
         setMessage('Upload successful!');
+        // Extract filename from the URL
+        let filename = '';
+        try {
+          const urlObj = new URL(data.url);
+          const parts = urlObj.pathname.split('/');
+          filename = parts[parts.length - 1];
+        } catch {}
+        setUploadedUrl(`/media?file=${encodeURIComponent(filename)}`);
       } else {
         setMessage(data.error || 'Upload failed.');
       }
@@ -57,6 +65,14 @@ export default function UploadPage() {
       if (data.success) {
         setUploadedUrl(data.url);
         setMessage('Upload successful!');
+        // Extract filename from the URL
+        let filename = '';
+        try {
+          const urlObj = new URL(data.url);
+          const parts = urlObj.pathname.split('/');
+          filename = parts[parts.length - 1];
+        } catch {}
+        setUploadedUrl(`/media?file=${encodeURIComponent(filename)}`);
       } else {
         setMessage(data.error || 'Upload failed.');
       }
@@ -103,7 +119,7 @@ export default function UploadPage() {
         {message && <div className="text-center text-sm mt-2 text-gray-300">{message}</div>}
         {uploadedUrl && (
           <div className="text-center mt-2">
-            <a href={uploadedUrl} target="_blank" rel="noopener noreferrer" className="text-discord-blue underline">View Uploaded File</a>
+            <a href={uploadedUrl} className="text-discord-blue underline">View in Media Gallery</a>
           </div>
         )}
       </form>
