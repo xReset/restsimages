@@ -3,31 +3,35 @@
 import { Github } from 'lucide-react'
 import { useEffect, useState } from 'react';
 
+function getDefaultAvatar(discriminator: string | number) {
+  const index = Number(discriminator) % 5;
+  return `https://cdn.discordapp.com/embed/avatars/${index}.png`;
+}
+
 function DiscordProfile() {
   const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
     fetch('https://api.lanyard.rest/v1/users/716965617231724571')
       .then(res => res.json())
-      .then(data => setProfile(data.data));
+      .then(data => {
+        console.log('Lanyard profile:', data.data);
+        setProfile(data.data);
+      });
   }, []);
 
   if (!profile) return <div className="text-white">Loading Discord profile...</div>;
 
-  // Avatar fallback
+  const discriminator = profile.discord_user?.discriminator ?? 0;
   const avatarUrl = profile.avatar
     ? `https://cdn.discordapp.com/avatars/716965617231724571/${profile.avatar}.png?size=128`
-    : 'https://cdn.discordapp.com/embed/avatars/0.png';
+    : getDefaultAvatar(discriminator);
 
-  // Banner fallback (Discord default banner)
   const bannerUrl = profile.banner
     ? `https://cdn.discordapp.com/banners/716965617231724571/${profile.banner}.png?size=512`
     : 'https://cdn.discordapp.com/banners/716965617231724571/0.png?size=512';
 
-  // About Me (bio) fallback
   const aboutMe = profile.discord_user?.bio || 'No bio available.';
-
-  // Username (no #0)
   const username = 'imsupertired';
 
   return (
