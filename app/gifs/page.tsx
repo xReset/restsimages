@@ -27,6 +27,7 @@ export default function GifsPage() {
 
   return (
     <div className="min-h-screen bg-black">
+      {/* Header */}
       {/* ...rest of your component code, unchanged... */}
     </div>
   );
