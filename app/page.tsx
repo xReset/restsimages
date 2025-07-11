@@ -1,9 +1,35 @@
 import { DiscordStatus } from '@/components/discord-status'
 import { Github } from 'lucide-react'
+import { useEffect, useState } from 'react';
+
+function DiscordProfile() {
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    fetch('https://api.lanyard.rest/v1/users/716965617231724571')
+      .then(res => res.json())
+      .then(data => setProfile(data.data));
+  }, []);
+
+  if (!profile) return <div className="text-white">Loading Discord profile...</div>;
+
+  return (
+    <div className="discord-card bg-black text-white flex flex-col items-center p-6 rounded-lg">
+      {profile.banner && (
+        <img src={`https://cdn.discordapp.com/banners/716965617231724571/${profile.banner}.png?size=512`} alt="Banner" className="w-full h-32 object-cover rounded-lg mb-4" />
+      )}
+      <img src={`https://cdn.discordapp.com/avatars/716965617231724571/${profile.avatar}.png?size=128`} alt="Avatar" className="w-24 h-24 rounded-full border-4 border-discord-blue mb-2" />
+      <h2 className="text-2xl font-bold">{profile.discord_user.username}#{profile.discord_user.discriminator}</h2>
+      <p className="text-gray-400 mb-2">{profile.activities[0]?.state || 'No activity'}</p>
+      <span className={`px-3 py-1 rounded-full text-xs font-semibold mb-2 ${profile.discord_status === 'online' ? 'bg-green-600' : profile.discord_status === 'idle' ? 'bg-yellow-600' : profile.discord_status === 'dnd' ? 'bg-red-600' : 'bg-gray-600'}`}>{profile.discord_status}</span>
+      <p className="text-gray-300 mt-2">{profile.discord_user.bio || 'No bio available.'}</p>
+    </div>
+  );
+}
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black text-white">
       {/* Header */}
       <header className="border-b border-discord-light">
         <div className="max-w-6xl mx-auto px-4 py-6">
@@ -16,7 +42,7 @@ export default function HomePage() {
                 GIFs
               </a>
               <a href="https://github.com/xReset" className="text-gray-300 hover:text-white transition-colors">
-                <Github className="w-5 h-5" />
+                GitHub
               </a>
             </div>
           </nav>
@@ -25,37 +51,12 @@ export default function HomePage() {
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Profile & Status */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Discord Status */}
-            <DiscordStatus />
-            {/* Bio */}
-            <div className="discord-card">
-              <h2 className="text-xl font-semibold text-white mb-4">About Me</h2>
-              <p className="text-gray-300 leading-relaxed">
-                Full-stack developer passionate about creating useful tools and applications. 
-                I love building Discord bots, web applications, and sharing cool GIFs with the community.
-              </p>
-              <div className="mt-6 space-y-3">
-                <div className="flex items-center space-x-3">
-                  <span className="text-sm text-gray-400">Discord:</span>
-                  <span className="text-white font-medium">imsupertired</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <span className="text-sm text-gray-400">GitHub:</span>
-                  <a 
-                    href="https://github.com/xReset" 
-                    className="text-discord-blue hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    @xReset
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+        <DiscordProfile />
+        <div className="discord-card bg-black text-white mt-8">
+          <h2 className="text-xl font-semibold mb-4">About Me</h2>
+          <p className="text-gray-300 leading-relaxed">
+            Full-stack developer passionate about creating useful tools and applications. I love building Discord bots, web applications, and sharing cool GIFs with the community.
+          </p>
         </div>
       </main>
 
@@ -64,7 +65,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <p className="text-gray-400 text-sm">
-               a9 2024 RestsImages.pics - Built with Next.js & Tailwind CSS
+              © 2025 RestsImages.pics - Built with Next.js & Tailwind CSS
             </p>
             <div className="flex items-center space-x-4">
               <a href="/gifs" className="text-sm text-gray-400 hover:text-white transition-colors">
