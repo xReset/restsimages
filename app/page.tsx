@@ -8,24 +8,40 @@ function getDefaultAvatar(discriminator: string | number) {
   return `https://cdn.discordapp.com/embed/avatars/${index}.png`;
 }
 
+async function logToServer(message: string) {
+  await fetch('/api/log', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message }),
+  });
+}
+
 function DiscordProfile() {
   const [profile, setProfile] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('https://api.lanyard.rest/v1/users/716965617231724571')
       .then(res => res.json())
       .then(data => {
         console.log('Lanyard profile:', data.data);
+        logToServer('Lanyard profile: ' + JSON.stringify(data.data));
         setProfile(data.data);
+      })
+      .catch(err => {
+        setError('Failed to fetch Discord profile');
+        logToServer('Fetch error: ' + err.message);
       });
   }, []);
 
+  if (error) return <div className="text-red-500">{error}</div>;
   if (!profile) return <div className="text-white">Loading Discord profile...</div>;
 
   const discriminator = profile.discord_user?.discriminator ?? 0;
   const avatarUrl = profile.avatar
     ? `https://cdn.discordapp.com/avatars/716965617231724571/${profile.avatar}.png?size=128`
     : getDefaultAvatar(discriminator);
+  logToServer('Avatar URL: ' + avatarUrl);
 
   const bannerUrl = profile.banner
     ? `https://cdn.discordapp.com/banners/716965617231724571/${profile.banner}.png?size=512`
@@ -37,11 +53,12 @@ function DiscordProfile() {
   return (
     <div className="discord-card bg-black text-white flex flex-col items-center p-6 rounded-lg">
       <img src={bannerUrl} alt="Banner" className="w-full h-32 object-cover rounded-lg mb-4" />
-      <img src={avatarUrl} alt="Avatar" className="w-24 h-24 rounded-full border-4 border-discord-blue mb-2" />
+      <img src={avatarUrl} alt="Avatar" className="w-24 h-24 rounded-full border-4 border-discord-blue mb-2" onError={() => setError('Failed to load avatar: ' + avatarUrl)} />
       <h2 className="text-2xl font-bold">{username}</h2>
       <p className="text-gray-400 mb-2">{profile.activities[0]?.state || 'No activity'}</p>
       <span className={`px-3 py-1 rounded-full text-xs font-semibold mb-2 ${profile.discord_status === 'online' ? 'bg-green-600' : profile.discord_status === 'idle' ? 'bg-yellow-600' : profile.discord_status === 'dnd' ? 'bg-red-600' : 'bg-gray-600'}`}>{profile.discord_status}</span>
       <p className="text-gray-300 mt-2">{aboutMe}</p>
+      {error && <div className="text-red-500 mt-2">{error}</div>}
     </div>
   );
 }
