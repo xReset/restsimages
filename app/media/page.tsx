@@ -34,17 +34,20 @@ export default function MediaPage() {
   const [mediaFiles, setMediaFiles] = useState<string[]>([]);
   const [password, setPassword] = useState('');
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Fetch the list of files from Vercel Blob (public listing)
-    fetch('https://blob.vercel-storage.com/api/list?prefix=media/')
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data.files)) {
-          setMediaFiles(data.files.map((f: any) => f.name.replace('media/', '')));
-        }
-      });
-  }, [deleting]);
+    if (authenticated) {
+      fetch('https://blob.vercel-storage.com/api/list?prefix=media/')
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data.files)) {
+            setMediaFiles(data.files.map((f: any) => f.name.replace('media/', '')));
+          }
+        });
+    }
+  }, [deleting, authenticated]);
 
   const handleCopy = (filename: string) => {
     const url = `https://restsimages.pics/media/${filename}`;
@@ -52,10 +55,6 @@ export default function MediaPage() {
   };
 
   const handleDelete = async (filename: string) => {
-    if (!password) {
-      alert('Enter password to delete');
-      return;
-    }
     setDeleting(filename);
     const res = await fetch('/api/blob-delete', {
       method: 'POST',
@@ -71,17 +70,42 @@ export default function MediaPage() {
     setDeleting(null);
   };
 
+  const handleAuth = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === 'CreamyWeamy') {
+      setAuthenticated(true);
+      setError('');
+    } else {
+      setError('Incorrect password');
+    }
+  };
+
+  if (!authenticated) {
+    return (
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-black relative overflow-hidden">
+        <StarBackground />
+        <form onSubmit={handleAuth} className="bg-discord-dark p-8 rounded-lg shadow-lg flex flex-col gap-4 w-full max-w-xs z-10">
+          <h2 className="text-xl font-bold mb-2 text-white">Enter Password to View Media</h2>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            className="p-2 rounded bg-black border border-gray-700 text-white"
+          />
+          <button type="submit" className="bg-discord-blue hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-colors">
+            View Media
+          </button>
+          {error && <div className="text-red-500 text-center">{error}</div>}
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-black relative overflow-hidden">
       <StarBackground />
       <div className="relative z-10 w-full max-w-4xl p-8 flex flex-wrap justify-center gap-8">
-        <input
-          type="password"
-          placeholder="Password for delete"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          className="mb-6 p-2 rounded bg-black border border-gray-700 text-white"
-        />
         {mediaFiles.map(filename => (
           <div key={filename} className="flex flex-col items-center">
             <img
