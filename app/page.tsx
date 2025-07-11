@@ -10,7 +10,7 @@ function getDefaultAvatar(discriminator: string | number) {
 
 function DiscordProfile() {
   const [profile, setProfile] = useState<any>(null);
-  const [avatarError, setAvatarError] = useState(false);
+  const [avatarError, setAvatarError] = useState(0); // 0: try webp, 1: try png, 2: try jpg, 3: fallback
 
   useEffect(() => {
     fetch('/api/discord-profile')
@@ -26,14 +26,25 @@ function DiscordProfile() {
 
   if (!profile) return <div className="text-white">Loading Discord profile...</div>;
 
+  const userId = profile.discord_user?.id;
+  const avatarHash = profile.discord_user?.avatar;
   const discriminator = profile.discord_user?.discriminator ?? 0;
-  const avatarUrl = !avatarError && profile.avatar
-    ? `https://cdn.discordapp.com/avatars/716965617231724571/${profile.avatar}.png?size=128`
-    : getDefaultAvatar(discriminator);
+
+  let avatarUrl = getDefaultAvatar(discriminator);
+  if (avatarHash && userId) {
+    if (avatarError === 0) {
+      avatarUrl = `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.webp?size=128`;
+    } else if (avatarError === 1) {
+      avatarUrl = `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.png?size=128`;
+    } else if (avatarError === 2) {
+      avatarUrl = `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.jpg?size=128`;
+    } // else fallback to default
+  }
+  console.log('Attempting avatar URL:', avatarUrl);
 
   const bannerUrl = profile.banner
-    ? `https://cdn.discordapp.com/banners/716965617231724571/${profile.banner}.png?size=512`
-    : 'https://cdn.discordapp.com/banners/716965617231724571/0.png?size=512';
+    ? `https://cdn.discordapp.com/banners/${userId}/${profile.banner}.png?size=512`
+    : `https://cdn.discordapp.com/banners/${userId}/0.png?size=512`;
 
   const aboutMe = profile.discord_user?.bio || 'No bio available.';
   const username = 'imsupertired';
@@ -46,9 +57,11 @@ function DiscordProfile() {
         alt="Avatar"
         className="w-24 h-24 rounded-full border-4 border-discord-blue mb-2"
         onError={() => {
-          if (!avatarError) {
-            setAvatarError(true);
-            console.warn('Avatar failed to load, falling back to default avatar:', getDefaultAvatar(discriminator));
+          if (avatarError < 3) {
+            console.warn('Avatar failed to load, trying next format:', avatarUrl);
+            setAvatarError(avatarError + 1);
+          } else {
+            console.error('All avatar formats failed, using default avatar.');
           }
         }}
       />
