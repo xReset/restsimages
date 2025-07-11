@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-discord-darkest text-white;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .discord-card {
+    @apply bg-discord-dark rounded-lg border border-discord-light p-6 shadow-lg;
+  }
+  
+  .discord-button {
+    @apply bg-discord-blue hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200;
+  }
+  
+  .discord-button-secondary {
+    @apply bg-discord-light hover:bg-discord-lighter text-white font-medium py-2 px-4 rounded-md transition-colors duration-200;
+  }
+  
+  .status-online {
+    @apply bg-discord-green;
+  }
+  
+  .status-offline {
+    @apply bg-discord-red;
+  }
+  
+  .status-idle {
+    @apply bg-discord-yellow;
+  }
+  
+  .status-dnd {
+    @apply bg-discord-red;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-discord-dark;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-discord-light rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-discord-lighter;
+} 
