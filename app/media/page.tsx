@@ -126,7 +126,7 @@ export default function MediaPage() {
           mediaFiles.map(filename => (
             <div
               key={filename}
-              ref={el => (fileRefs.current[filename] = el)}
+              ref={el => { fileRefs.current[filename] = el; }}
               className={`flex flex-col items-center transition-shadow duration-500 ${highlighted === filename ? 'ring-4 ring-discord-blue shadow-xl' : ''}`}
             >
               <img
