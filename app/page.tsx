@@ -46,7 +46,15 @@ function DiscordProfile() {
     ? `https://cdn.discordapp.com/banners/${userId}/${profile.banner}.png?size=512`
     : `https://cdn.discordapp.com/banners/${userId}/0.png?size=512`;
 
-  const aboutMe = profile.discord_user?.bio || 'No bio available.';
+  const discordUser = profile.discord_user;
+  console.log('Discord user object:', discordUser);
+
+  const aboutMe =
+    discordUser.bio ||
+    discordUser.about_me ||
+    discordUser.global_name ||
+    discordUser.display_name ||
+    'No bio available.';
   const username = 'imsupertired';
 
   return (
