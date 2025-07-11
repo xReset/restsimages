@@ -50,7 +50,7 @@ export default function MediaPage() {
   }, [deleting, authenticated]);
 
   const handleCopy = (filename: string) => {
-    const url = `https://restsimages.pics/media/${filename}`;
+    const url = `https://store-lp6BxZa7PXzR45H6.vercel-storage.com/media/${filename}`;
     navigator.clipboard.writeText(url);
   };
 
@@ -111,7 +111,7 @@ export default function MediaPage() {
           mediaFiles.map(filename => (
             <div key={filename} className="flex flex-col items-center">
               <img
-                src={`https://media.githubusercontent.com/media/restsimages/restsimages.pics/main/media/${filename}`}
+                src={`https://store-lp6BxZa7PXzR45H6.vercel-storage.com/media/${filename}`}
                 alt={filename}
                 className="max-w-xs max-h-80 rounded shadow-lg border border-gray-800 bg-black mb-2"
               />
