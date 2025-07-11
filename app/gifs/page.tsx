@@ -4,59 +4,32 @@ import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Search, Filter, Grid, List } from 'lucide-react'
 import { GifCard } from '@/components/gif-card'
+import fs from 'fs';
+import path from 'path';
 
-// Sample GIF data - replace with actual GIFs
-const sampleGifs = [
-  {
-    filename: 'womandancing.gif',
-    category: 'reaction',
-    tags: ['dance', 'celebration', 'fun']
-  },
-  {
-    filename: 'skull.gif',
-    category: 'meme',
-    tags: ['skull', 'death', 'dark']
-  },
-  {
-    filename: 'flex.gif',
-    category: 'flex',
-    tags: ['flex', 'muscle', 'strength']
-  },
-  {
-    filename: 'laugh.gif',
-    category: 'reaction',
-    tags: ['laugh', 'funny', 'humor']
-  },
-  {
-    filename: 'cry.gif',
-    category: 'reaction',
-    tags: ['cry', 'sad', 'emotion']
-  },
-  {
-    filename: 'shock.gif',
-    category: 'reaction',
-    tags: ['shock', 'surprise', 'wow']
-  }
-]
+const gifsDir = path.join(process.cwd(), 'public', 'gifs');
+
+function getGifFiles() {
+  const files = fs.readdirSync(gifsDir);
+  return files.filter(file => /\.(gif|png|jpg|jpeg)$/i.test(file));
+}
 
 const categories = ['all', 'reaction', 'meme', 'flex']
 
 export default function GifsPage() {
+  const gifFiles = getGifFiles();
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
   const filteredGifs = useMemo(() => {
-    return sampleGifs.filter(gif => {
-      const matchesSearch = gif.filename.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          gif.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-      const matchesCategory = selectedCategory === 'all' || gif.category === selectedCategory
-      return matchesSearch && matchesCategory
-    })
-  }, [searchTerm, selectedCategory])
+    return gifFiles.filter(filename => {
+      return filename.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+  }, [searchTerm]);
 
   return (
-    <div className="min-h-screen bg-discord-darkest">
+    <div className="min-h-screen bg-black">
       {/* Header */}
       <header className="border-b border-discord-light">
         <div className="max-w-6xl mx-auto px-4 py-6">
@@ -103,6 +76,7 @@ export default function GifsPage() {
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="px-3 py-2 bg-discord-darker border border-discord-light rounded-md text-white focus:outline-none focus:ring-2 focus:ring-discord-blue"
+                title="Select category filter"
               >
                 {categories.map(category => (
                   <option key={category} value={category}>
@@ -117,12 +91,14 @@ export default function GifsPage() {
               <button
                 onClick={() => setViewMode('grid')}
                 className={`p-2 rounded ${viewMode === 'grid' ? 'bg-discord-blue text-white' : 'text-gray-400 hover:text-white'}`}
+                title="Grid view"
               >
                 <Grid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
                 className={`p-2 rounded ${viewMode === 'list' ? 'bg-discord-blue text-white' : 'text-gray-400 hover:text-white'}`}
+                title="List view"
               >
                 <List className="w-4 h-4" />
               </button>
@@ -147,17 +123,17 @@ export default function GifsPage() {
               : 'space-y-4'
             }
           >
-            {filteredGifs.map((gif, index) => (
+            {filteredGifs.map((filename, index) => (
               <motion.div
-                key={gif.filename}
+                key={filename}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
                 <GifCard
-                  filename={gif.filename}
-                  category={gif.category}
-                  tags={gif.tags}
+                  filename={filename}
+                  category={''}
+                  tags={[]}
                 />
               </motion.div>
             ))}
