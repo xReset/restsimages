@@ -84,14 +84,13 @@ export default function MediaPage() {
     return (
       <div className="min-h-screen w-full flex flex-col items-center justify-center bg-black relative overflow-hidden">
         <StarBackground />
-        <form onSubmit={handleAuth} className="bg-discord-dark p-8 rounded-lg shadow-lg flex flex-col gap-4 w-full max-w-xs z-10">
-          <h2 className="text-xl font-bold mb-2 text-white">Enter Password to View Media</h2>
+        <form onSubmit={handleAuth} className="flex flex-col gap-4 w-full max-w-xs z-10 items-center">
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            className="p-2 rounded bg-black border border-gray-700 text-white"
+            className="p-2 rounded bg-black border border-gray-700 text-white text-center"
           />
           <button type="submit" className="bg-discord-blue hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-colors">
             View Media
@@ -106,30 +105,34 @@ export default function MediaPage() {
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-black relative overflow-hidden">
       <StarBackground />
       <div className="relative z-10 w-full max-w-4xl p-8 flex flex-wrap justify-center gap-8">
-        {mediaFiles.map(filename => (
-          <div key={filename} className="flex flex-col items-center">
-            <img
-              src={`https://blob.vercel-storage.com/media/${filename}`}
-              alt={filename}
-              className="max-w-xs max-h-80 rounded shadow-lg border border-gray-800 bg-black mb-2"
-            />
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleCopy(filename)}
-                className="px-3 py-1 bg-discord-blue text-white rounded hover:bg-blue-600 transition-colors text-xs shadow"
-              >
-                Copy Link
-              </button>
-              <button
-                onClick={() => handleDelete(filename)}
-                className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors text-xs shadow"
-                disabled={deleting === filename}
-              >
-                {deleting === filename ? 'Deleting...' : 'Delete'}
-              </button>
+        {mediaFiles.length === 0 ? (
+          <div className="text-white text-lg">No media found. Upload something at /upload!</div>
+        ) : (
+          mediaFiles.map(filename => (
+            <div key={filename} className="flex flex-col items-center">
+              <img
+                src={`https://media.githubusercontent.com/media/restsimages/restsimages.pics/main/media/${filename}`}
+                alt={filename}
+                className="max-w-xs max-h-80 rounded shadow-lg border border-gray-800 bg-black mb-2"
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleCopy(filename)}
+                  className="px-3 py-1 bg-discord-blue text-white rounded hover:bg-blue-600 transition-colors text-xs shadow"
+                >
+                  Copy Link
+                </button>
+                <button
+                  onClick={() => handleDelete(filename)}
+                  className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-800 transition-colors text-xs shadow"
+                  disabled={deleting === filename}
+                >
+                  {deleting === filename ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
       <style jsx global>{`
         @keyframes twinkle {
