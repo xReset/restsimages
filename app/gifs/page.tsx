@@ -45,7 +45,7 @@ function StarBackground() {
   );
 }
 
-function getDefaultAvatar(discriminator) {
+function getDefaultAvatar(discriminator: string | number) {
   const index = Number(discriminator) % 5;
   return `https://cdn.discordapp.com/embed/avatars/${index}.png`;
 }
