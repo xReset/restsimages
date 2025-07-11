@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 import { useEffect, useState, useMemo } from 'react';
 
 export async function GET() {
