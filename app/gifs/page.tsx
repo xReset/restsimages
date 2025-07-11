@@ -2,6 +2,34 @@
 
 import { useEffect, useState } from 'react';
 
+function StarBackground() {
+  // Animated stars using CSS keyframes
+  return (
+    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      {[...Array(100)].map((_, i) => {
+        const size = Math.random() * 2 + 1;
+        const left = Math.random() * 100;
+        const top = Math.random() * 100;
+        const duration = Math.random() * 2 + 2;
+        return (
+          <div
+            key={i}
+            className="bg-white rounded-full opacity-70 animate-twinkle"
+            style={{
+              width: `${size}px`,
+              height: `${size}px`,
+              position: 'absolute',
+              left: `${left}%`,
+              top: `${top}%`,
+              animationDuration: `${duration}s`,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
 export default function GifsPage() {
   const [gifFiles, setGifFiles] = useState<string[]>([]);
 
@@ -11,37 +39,42 @@ export default function GifsPage() {
       .then(setGifFiles);
   }, []);
 
+  const handleCopy = (filename: string) => {
+    const url = `https://restsimages.pics/gifs/${filename}`;
+    navigator.clipboard.writeText(url);
+  };
+
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-black relative overflow-hidden">
       <StarBackground />
       <div className="relative z-10 w-full max-w-4xl p-8 flex flex-wrap justify-center gap-8">
         {gifFiles.map(filename => (
-          <img
-            key={filename}
-            src={`/gifs/${filename}`}
-            alt={filename}
-            className="max-w-xs max-h-80 rounded shadow-lg border border-gray-800 bg-black"
-          />
+          <div key={filename} className="flex flex-col items-center">
+            <img
+              src={`/gifs/${filename}`}
+              alt={filename}
+              className="max-w-xs max-h-80 rounded shadow-lg border border-gray-800 bg-black mb-2"
+            />
+            <button
+              onClick={() => handleCopy(filename)}
+              className="mt-1 px-3 py-1 bg-discord-blue text-white rounded hover:bg-blue-600 transition-colors text-xs shadow"
+            >
+              Copy Link
+            </button>
+          </div>
         ))}
       </div>
+      <style jsx global>{`
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.7; }
+          50% { opacity: 0.2; }
+        }
+        .animate-twinkle {
+          animation-name: twinkle;
+          animation-iteration-count: infinite;
+        }
+      `}</style>
     </div>
-  );
-}
-
-function StarBackground() {
-  return (
-    <svg width="100%" height="100%" className="absolute inset-0 z-0" style={{ display: 'block' }}>
-      {[...Array(150)].map((_, i) => (
-        <circle
-          key={i}
-          cx={Math.random() * 1920}
-          cy={Math.random() * 1080}
-          r={Math.random() * 1.2 + 0.3}
-          fill="white"
-          opacity={Math.random() * 0.8 + 0.2}
-        />
-      ))}
-    </svg>
   );
 }
 

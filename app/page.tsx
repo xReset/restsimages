@@ -59,7 +59,6 @@ function DiscordProfile() {
 
   return (
     <div className="discord-card bg-black text-white flex flex-col items-center p-6 rounded-lg">
-      <img src={bannerUrl} alt="Banner" className="w-full h-32 object-cover rounded-lg mb-4" />
       <img
         src={avatarUrl}
         alt="Avatar"
