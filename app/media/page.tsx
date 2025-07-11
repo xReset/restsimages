@@ -44,12 +44,19 @@ export default function MediaPage() {
 
   useEffect(() => {
     if (authenticated) {
-      fetch('https://blob.vercel-storage.com/api/list?prefix=media/')
+      fetch('/api/blob-list')
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data.files)) {
-            setMediaFiles(data.files.map((f: any) => f.name.replace('media/', '')));
+            setMediaFiles(data.files.map((f: any) => f.key.replace('media/', '')));
+          } else if (data.error) {
+            setMediaFiles([]);
+            setError('Failed to load media: ' + data.error);
           }
+        })
+        .catch(err => {
+          setMediaFiles([]);
+          setError('Failed to load media: ' + err.message);
         });
     }
   }, [deleting, authenticated]);
