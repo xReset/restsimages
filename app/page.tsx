@@ -54,7 +54,7 @@ function DiscordProfile() {
     discordUser.about_me ||
     discordUser.global_name ||
     discordUser.display_name ||
-    'No bio available.';
+    "honor is not won by grand gestures but by small, steadfast acts of integrity";
   const username = 'imsupertired';
 
   return (
@@ -109,7 +109,7 @@ export default function HomePage() {
         <div className="discord-card bg-black text-white mt-8">
           <h2 className="text-xl font-semibold mb-4">About Me</h2>
           <p className="text-gray-300 leading-relaxed">
-            Full-stack developer passionate about creating useful tools and applications. I love building Discord bots, web applications, and sharing cool GIFs with the community.
+            Full-stack developer passionate about making tools and applications. I enjoy building discord bots, web applications, and other personal projects. Hit me up on discord for further info
           </p>
         </div>
       </main>
