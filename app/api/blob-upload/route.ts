@@ -46,6 +46,7 @@ export async function POST(request: Request) {
     const { url: blobUrl } = await put(`media/${filename}`, uploadFile, {
       access: 'public',
       token: process.env.BLOB_READ_WRITE_TOKEN,
+      allowOverwrite: true,
     });
 
     return NextResponse.json({ success: true, url: blobUrl });
