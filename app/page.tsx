@@ -1,3 +1,5 @@
+'use client'
+
 import { DiscordStatus } from '@/components/discord-status'
 import { Github } from 'lucide-react'
 import { useEffect, useState } from 'react';
